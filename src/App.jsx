@@ -28,9 +28,9 @@ if(authToken){
 }
 
 const App = () => {
-  const [createType, setcreateType] = useState('');
-  const [isCreating, setisCreating] = useState(false);
-  const [isEditing, setisEditing] = useState(false);
+  const [createType, setCreateType] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
     if(!authToken) return <Auth />
 
@@ -39,15 +39,15 @@ const App = () => {
         <Chat client={client} theme="team light">
             <ChannelListContainer
               isCreating={isCreating}
-              setisCreating={setisCreating}
-              setcreateType={setcreateType}
-              setisEditing={setisEditing}
+              setIsCreating={setIsCreating}
+              setCreateType={setCreateType}
+              setIsEditing={setIsEditing}
             />
             <ChannelContainer
               isCreating={isCreating}
-              setisCreating={setisCreating}
+              setIsCreating={setIsCreating}
               isEditing={isEditing}
-              setisEditing={setisEditing}
+              setIsEditing={setIsEditing}
               createType={createType}
             
             />

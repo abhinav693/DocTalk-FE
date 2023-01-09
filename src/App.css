@@ -394,6 +394,7 @@
   }
   
   .channel-list__list__wrapper {
+    background-color: #005fff;
     display: flex;
     flex-direction: column;
     background: var(--primary-color);
@@ -935,6 +936,7 @@
   }
   
   .team-channel-list {
+    background-color: #005fff;
     width: 100%;
     display: flex;
     flex-direction: column;
