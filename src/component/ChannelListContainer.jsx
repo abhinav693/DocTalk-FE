@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ChannelList, useChatContext } from 'stream-chat-react'
 import Cookies from 'universal-cookie'
 
@@ -30,8 +30,19 @@ const CompanyHeader = () => (
     </div>
 )
 
+const customChannelTeamFilter = (channels) => {
+    return channels.filter((channel) => channel.type === 'team');
+}
 
-const ChannelListContainer = ({ isCreating, setIsCreating, setCreateType, setIsEditing }) => {  
+const customChannelMessagingFilter = (channels) => {
+    return channels.filter((channel) => channel.type === 'messaging');
+}
+
+const ChannelListContent = ({ isCreating, setIsCreating, setCreateType, setIsEditing, setToggleContainer }) => {  
+
+    const { client } = useChatContext();
+
+
     const logout = () => {
     cookies.remove("token");
     cookies.remove('userId');
@@ -42,18 +53,19 @@ const ChannelListContainer = ({ isCreating, setIsCreating, setCreateType, setIsE
     cookies.remove('phoneNumber');
 
     window.location.reload();
-
 }
+
+const filters = { members: { $in: [client.userID]} }  // means we want to get all the channels & direct messages where our user is included
 
   return (
     <>
         <SideBar logout={logout}/>
         <div className="channel-list__list__wrapper">
             <CompanyHeader />
-            <ChannelSearch />
+            <ChannelSearch setToggleContainer={setToggleContainer}/>
             <ChannelList 
-                filter={{}}
-                channelRenderFilterFn={() => {}}
+                filter={filters}
+                channelRenderFilterFn={customChannelTeamFilter}
                 List={(listProps) => (
                     <TeamChannelList
                         {...listProps}
@@ -62,18 +74,22 @@ const ChannelListContainer = ({ isCreating, setIsCreating, setCreateType, setIsE
                         setIsCreating={setIsCreating}
                         setCreateType={setCreateType}
                         setIsEditing={setIsEditing}
+                        setToggleContainer={setToggleContainer}
                     />
                 )}   
                 Preview={(previewProps) => (
                     <TeamChannelPreview 
                         {...previewProps}
                         type="team"
+                        setIsCreating={setIsCreating}
+                        setIsEditing={setIsEditing}
+                        setToggleContainer={setToggleContainer}
                     />
                 )} 
             />
             <ChannelList 
-                filter={{}}
-                channelRenderFilterFn={() => {}}
+                filter={filters}
+                channelRenderFilterFn={customChannelMessagingFilter}
                 List={(listProps) => (
                     <TeamChannelList
                         {...listProps}
@@ -82,12 +98,16 @@ const ChannelListContainer = ({ isCreating, setIsCreating, setCreateType, setIsE
                         setIsCreating={setIsCreating}
                         setCreateType={setCreateType}
                         setIsEditing={setIsEditing}
+                        setToggleContainer={setToggleContainer}
                     />
                 )}   
                 Preview={(previewProps) => (
                     <TeamChannelPreview 
                         {...previewProps}
                         type="messaging"
+                        setIsCreating={setIsCreating}
+                        setIsEditing={setIsEditing}
+                        setToggleContainer={setToggleContainer}
                     />
                 )} 
             />
@@ -95,6 +115,38 @@ const ChannelListContainer = ({ isCreating, setIsCreating, setCreateType, setIsE
 
     </>
   )
+}
+
+const ChannelListContainer = ({ setIsEditing, setCreateType, setIsCreating }) => {
+
+    const [toggleContainer, setToggleContainer] = useState(false);
+
+    return (
+        <>
+            <div className="channel-list__container">
+                <ChannelListContent
+                    setIsCreating={setIsCreating}
+                    setCreateType={setCreateType}
+                    setIsEditing={setIsEditing}
+                />
+            </div>
+
+            <div className="channel-list__container-responsive"        // for mobile screen
+                style={{ left: toggleContainer ? '0%' : '-89%', backgroundColor: '#005fff'}}
+                >
+                    <div className="channel-list__container-toggle" onClick={() => setToggleContainer((prevToggleContainer) => !prevToggleContainer)}>
+                    </div>
+                    <ChannelListContent
+                    setIsCreating={setIsCreating}
+                    setCreateType={setCreateType}
+                    setIsEditing={setIsEditing}
+                    setToggleContainer={setToggleContainer}
+                />
+            </div>
+
+            
+        </>
+    )
 }
 
 export default ChannelListContainer

@@ -27,12 +27,12 @@ const Auth = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const { fullName, username, password, phoneNumber, avatarURL } = form;  // collect the data from the form
+        const { username, password, phoneNumber, avatarURL } = form;  // collect the data from the form
 
         const URL = 'http://localhost:5000/auth';  // set the url for request
 
-        const { data: { token, userId, hashedPassword } } = await axios.post(`${URL}/${isSignup ? 'signup' : 'login'}`, {    // called the required url (signup/login) and in return received the data which are token, userId, hashedPassword
-            username, fullName, password, phoneNumber, avatarURL
+        const { data: { token, userId, hashedPassword, fullName } } = await axios.post(`${URL}/${isSignup ? 'signup' : 'login'}`, {    // called the required url (signup/login) and in return received the data which are token, userId, hashedPassword
+            username, fullName: form.fullName, password, phoneNumber, avatarURL
         })
 
         // if just logging in then store these data in the cookie
